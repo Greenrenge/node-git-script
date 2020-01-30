@@ -46,19 +46,19 @@ const onlyGitRepositoryPredicate = fullPath =>
 //       - then pull origin
 //      - git push origin2 -u xxxxxx
 const error = l => {
-  console.error('ERROR',l)
+  console.error("ERROR", l);
   p(fs.appendFile)("./error.log", `${l}\n`);
-}
+};
 
 const done = l => {
-  console.log('DONE',l)
+  console.log("DONE", l);
   p(fs.appendFile)("./done.log", `${l}\n`);
-}
+};
 
 const log = l => {
-  console.log('LOG',l)
+  console.log("LOG", l);
   p(fs.appendFile)("./info.log", `${l}\n`);
-}
+};
 
 const createGitCommandMap = fullPath => {
   return {
@@ -86,7 +86,7 @@ const migration = async ({ path, cmd }) => {
   // not found config
   if (!jsonMap[folderName]) {
     error(`not found config json for ${path}`);
-    return
+    return;
   }
 
   const remotes = await remoteGetAll();
@@ -94,7 +94,7 @@ const migration = async ({ path, cmd }) => {
   // not found origin
   if (!remotes[source]) {
     error(`not found origin for ${path}`);
-    return
+    return;
   }
 
   const newOrigin = transformToSSH(remotes[source]);
@@ -103,16 +103,20 @@ const migration = async ({ path, cmd }) => {
   log(`${folderName} : set new url to ${newOrigin}`);
   const branches = await remoteGetBranch(source);
   log(`${folderName} : remote branch is ${branches}`);
-  
-  await remoteAdd(dest,jsonMap[folderName])
+
+  await remoteAdd(dest, jsonMap[folderName]);
 
   for (const b of branches) {
-    await checkOutTo(b);
-    await pull(source);
-    await pushCreate(dest, b);
-    log(`${folderName} : BRANCH CREATED ${b}`);
+    try {
+      await checkOutTo(b);
+      await pull(source);
+      await pushCreate(dest, b);
+      log(`${folderName} : BRANCH CREATED ${b}`);
+    } catch (err) {
+      error(`${folderName} : BRANCH FAILED ${err.toString()}`)
+    }
   }
-  done(`===========DONE========${folderName}`)
+  done(`===========DONE========${folderName}`);
 };
 
 async function main() {
@@ -124,9 +128,9 @@ async function main() {
     .map(createGitCommandMap)
     .concurrency(5)
     .map(migration)
-    .catch(err=>{
-      error(`MAIN ERROR ${err.toString()}`)
-      throw err
+    .catch(err => {
+      error(`MAIN ERROR ${err.toString()}`);
+      throw err;
     });
 }
 
