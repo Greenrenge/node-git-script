@@ -137,3 +137,10 @@ async function main() {
 main()
   .then(() => console.log("MAIN DONE"))
   .catch(err => console.error("MAIN ERROR", err.toString()));
+
+  process.on('unhandledRejection',(reason,promise)=>{
+    console.error('UN-HANDLED-REJECTION!')
+    console.error(reason)
+    console.error(promise)
+    process.exit(1)
+  })
