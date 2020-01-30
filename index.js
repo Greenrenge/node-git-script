@@ -116,7 +116,9 @@ const migration = async ({ path, cmd }) => {
   const branches = await remoteGetBranch(source);
   log(`${folderName} : remote branch is ${branches}`);
 
-  await remoteAdd(dest, jsonMap[folderName]);
+  if (!remotes[dest]) {
+    await remoteAdd(dest, jsonMap[folderName]);
+  }
 
   for (const b of branches) {
     try {
