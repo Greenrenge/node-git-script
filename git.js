@@ -92,6 +92,7 @@ module.exports = cwd => {
 };
 
 const transformToSSH = https => {
+  if(!https.startsWith('https://')) return https
   const tmp1 = https.replace("https://", "git@");
   return (
     tmp1.substring(0, tmp1.indexOf("/")) +

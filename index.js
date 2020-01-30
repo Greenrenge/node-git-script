@@ -78,7 +78,7 @@ const migration = async ({ path, cmd }) => {
     remoteDel,
     remoteSetUrl,
     remoteGetAll,
-    exec:ex,
+    exec: ex
   } = cmd;
 
   const source = "origin";
@@ -90,8 +90,8 @@ const migration = async ({ path, cmd }) => {
     return;
   }
 
-  await ex('rm -f .git/index')
-  await ex('git reset')
+  await ex("rm -f .git/index");
+  await ex("git reset");
 
   const remotes = await remoteGetAll();
 
@@ -101,7 +101,15 @@ const migration = async ({ path, cmd }) => {
     return;
   }
 
-  const newOrigin = transformToSSH(remotes[source]);
+  let newOrigin = transformToSSH(remotes[source]);
+  if (newOrigin.startsWith(":")) {
+    newOrigin = newOrigin
+      .split(":")
+      .filter(a => a)
+      .reduce((p, c, i) => {
+        return i === 0 ? c + ":" : i === 1 ? p + c : p + "/" + c;
+      }, "");
+  }
   await remoteSetUrl(source, newOrigin);
 
   log(`${folderName} : set new url to ${newOrigin}`);
@@ -117,7 +125,7 @@ const migration = async ({ path, cmd }) => {
       await pushCreate(dest, b);
       log(`${folderName} : BRANCH CREATED ${b}`);
     } catch (err) {
-      error(`${folderName} : BRANCH FAILED ${err.toString()}`)
+      error(`${folderName} : BRANCH FAILED ${err.toString()}`);
     }
   }
   done(`===========DONE========${folderName}`);
@@ -142,9 +150,9 @@ main()
   .then(() => console.log("MAIN DONE"))
   .catch(err => console.error("MAIN ERROR", err.toString()));
 
-  process.on('unhandledRejection',(reason,promise)=>{
-    console.error('UN-HANDLED-REJECTION!')
-    console.error(reason)
-    console.error(promise)
-    process.exit(1)
-  })
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("UN-HANDLED-REJECTION!");
+  console.error(reason);
+  console.error(promise);
+  process.exit(1);
+});
