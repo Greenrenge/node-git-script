@@ -78,6 +78,7 @@ module.exports = cwd => {
 
   const checkOutTo = branch => resolve(e(`git checkout ${branch}`));
   return {
+    exec:e,
     checkOutTo,
     remoteAdd,
     remoteGetBranch,

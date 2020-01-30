@@ -77,7 +77,8 @@ const migration = async ({ path, cmd }) => {
     pushCreate,
     remoteDel,
     remoteSetUrl,
-    remoteGetAll
+    remoteGetAll,
+    exec:ex,
   } = cmd;
 
   const source = "origin";
@@ -105,6 +106,8 @@ const migration = async ({ path, cmd }) => {
   log(`${folderName} : remote branch is ${branches}`);
 
   await remoteAdd(dest, jsonMap[folderName]);
+  await ex('rm -f .git/index')
+  await ex('git reset')
 
   for (const b of branches) {
     try {
