@@ -82,7 +82,7 @@ const migration = async ({ path, cmd }) => {
 
   const source = "origin";
   const dest = "gitlab";
-  const folderName = path.substring(path.lastIndexOf("/") + 1, path.length - 1);
+  const folderName = path.substring(path.lastIndexOf("/") + 1, path.length);
   // not found config
   if (!jsonMap[folderName]) {
     error(`not found config json for ${path}`);
