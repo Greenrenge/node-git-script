@@ -121,12 +121,8 @@ async function main() {
     .filter(onlyGitRepositoryPredicate);
 
   resolve(gitFolders)
-    .concurrency(5)
-    .tap(l => {
-      console.log(`doing ... ${l}`);
-      log(`doing ... ${l}`);
-    })
     .map(createGitCommandMap)
+    .concurrency(5)
     .map(migration)
     .catch(err=>{
       error(`MAIN ERROR ${err.toString()}`)
