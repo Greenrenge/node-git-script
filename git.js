@@ -1,7 +1,6 @@
 const { exec } = require("./helper");
 const FP = require("functional-promises");
-const { chain, resolve } = FP;
-const p = require("util").promisify;
+const { resolve } = FP;
 const createInPath = cwd => cmd =>
   exec(cmd, { capture: true, echo: true, cwd });
 /**
@@ -29,13 +28,13 @@ const createInPath = cwd => cmd =>
 //       - then checkout each branch
 //      - git push origin2 -u xxxxxx
 
-const path = "/Users/greenrenge/github/fitnessfirst-timetable";
+// const path = "/Users/greenrenge/github/fitnessfirst-timetable";
 
 module.exports = cwd => {
   const e = createInPath(cwd);
 
   /**
-   * {origin:'https://github.com/chaintng/fitnessfirst-timetable.git'}
+   * {origin:'https://github.com/xxx/yyy.git'}
    */
   const remoteGetAll = () =>
     resolve(e("git remote -v"))
@@ -44,21 +43,21 @@ module.exports = cwd => {
         x
           .split("\n")
           .filter(a => a)
-          .map(s => s.split(/\t/)) //  'origin\thttps://github.com/chaintng/fitnessfirst-timetable.git (fetch)
+          .map(s => s.split(/\t/)) //  'origin\thttps://github.com/xxx/yyy.git (fetch)
           .reduce((p, c) => ({ ...p, [c[0]]: c[1].split(" (")[0] }), {})
       );
 
   const remoteSetUrl = (remoteName, url) =>
-    resolve(e(`git remote set-url ${remoteName} ${url}`));
+    e(`git remote set-url ${remoteName} ${url}`)
   const remoteAdd = (remoteName, url) =>
-    resolve(e(`git remote add ${remoteName} ${url}`));
+    e(`git remote add ${remoteName} ${url}`)
   const remoteDel = remoteName => resolve(e(`git remote rm ${remoteName}`));
   const pull = (remoteName, branch) =>
-    resolve(e(`git pull ${remoteName} ${branch ? branch : ""}`));
+    e(`git pull ${remoteName} ${branch ? branch : ""}`)
   const push = (remoteName, branch) =>
-    resolve(e(`git push ${remoteName} ${branch ? branch : ""}`));
+    e(`git push ${remoteName} ${branch ? branch : ""}`)
   const pushCreate = (remoteName, branch) =>
-    resolve(e(`git push ${remoteName} -u ${branch}`));
+    e(`git push ${remoteName} -u ${branch}`)
 
   /**
    * ['master','dependabot/npm_and_yarn/eslint-utils-1.4.3']
@@ -76,7 +75,7 @@ module.exports = cwd => {
           .map(a => a.replace(`remotes/${remoteName}/`, ""))
       );
 
-  const checkOutTo = branch => resolve(e(`git checkout ${branch}`));
+  const checkOutTo = branch => e(`git checkout ${branch}`)
   return {
     exec:e,
     checkOutTo,

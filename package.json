@@ -4,12 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node_modules/riteway/bin/riteway **/test/**/*.spec.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "functional-promises": "^1.7.98",
     "yargs": "^15.1.0"
+  },
+  "devDependencies": {
+    "riteway": "^6.1.1"
   }
 }
